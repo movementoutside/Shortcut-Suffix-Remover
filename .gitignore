@@ -1,0 +1,9 @@
+# AutoHotkey compiled binaries
+*.exe
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Editor files
+.vscode/
