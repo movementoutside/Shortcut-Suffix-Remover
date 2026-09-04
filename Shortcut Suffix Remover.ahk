@@ -1,23 +1,39 @@
+#NoEnv
+#SingleInstance Force
 #Persistent
-SetTimer, CheckShortcuts, 1000  ; Revisa cada 1 segundo
+SetBatchLines, -1
+
+; Shortcut Suffix Remover
+; Automatically removes the Windows " - Shortcut" suffix from newly created
+; .lnk files on the current user's Desktop.
+;
+; AutoHotkey: v1.1+
+
+ShortcutSuffix := " - Shortcut"
+CheckIntervalMs := 1000
+
+SetTimer, CheckShortcuts, %CheckIntervalMs%
+Gosub, CheckShortcuts
+Return
 
 CheckShortcuts:
-Loop, %A_Desktop%\*.lnk  ; Recorre todos los accesos directos (.lnk) en el escritorio
+Loop, Files, %A_Desktop%\*.lnk, F
 {
-    ; Verifica si el nombre del archivo contiene " - Shortcut"
-    if (InStr(A_LoopFileName, " - Shortcut"))
+    fileName := A_LoopFileName
+    filePath := A_LoopFileFullPath
+
+    ; Strip the .lnk extension before checking the visible shortcut name.
+    baseName := SubStr(fileName, 1, StrLen(fileName) - 4)
+
+    ; Only rename shortcuts whose names end exactly with the configured suffix.
+    if (SubStr(baseName, 1 - StrLen(ShortcutSuffix)) = ShortcutSuffix)
     {
-        ; Obtiene la parte del nombre sin la extensión ".lnk"
-        baseName := SubStr(A_LoopFileName, 1, StrLen(A_LoopFileName) - 4)
-        
-        ; Elimina el sufijo " - Shortcut" del nombre base
-        newName := RegExReplace(baseName, " - Shortcut$", "")
-        
-        ; Añade ".lnk" de nuevo al final del nombre renombrado
-        newName := newName ".lnk"
-        
-        ; Renombra el archivo, manteniendo la ruta original
-        FileMove, %A_LoopFileFullPath%, %A_Desktop%\%newName%
+        newBaseName := SubStr(baseName, 1, StrLen(baseName) - StrLen(ShortcutSuffix))
+        targetPath := A_Desktop "\\" newBaseName ".lnk"
+
+        ; Never overwrite an existing shortcut with the desired name.
+        if (!FileExist(targetPath))
+            FileMove, %filePath%, %targetPath%
     }
 }
 Return

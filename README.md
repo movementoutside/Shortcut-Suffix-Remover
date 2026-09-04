@@ -1,82 +1,70 @@
 # Shortcut Suffix Remover
 
-Automatically removes the **" - Shortcut"** suffix that Windows adds to newly created shortcut files.
+A lightweight Windows utility written in **AutoHotkey** that automatically removes the ` - Shortcut` suffix from shortcuts created on the Desktop.
 
-## Overview
+For example:
 
-Shortcut Suffix Remover is a lightweight Windows utility designed to automatically remove the default **" - Shortcut"** text appended to shortcut filenames when they are created.
+```text
+Visual Studio Code - Shortcut
+```
 
-The application runs in the background and helps maintain cleaner, more organized shortcut names without requiring any manual renaming.
+becomes:
+
+```text
+Visual Studio Code
+```
+
+The script runs quietly in the background and checks the current user's Desktop for newly created `.lnk` files.
 
 ## Features
 
-- Automatically removes the **" - Shortcut"** suffix from newly created shortcuts.
+- Automatically monitors Desktop shortcuts.
+- Removes only the exact ` - Shortcut` suffix.
 - Runs silently in the background.
-- Lightweight and simple to use.
-- No manual intervention required.
-- Designed specifically for Windows environments.
+- Uses the current user's Desktop path automatically — no hard-coded personal paths.
+- Does not overwrite an existing shortcut if the cleaned name already exists.
+- The suffix and scan interval can be adjusted at the top of the script.
 
 ## Requirements
 
-- Windows operating system
-- AutoHotkey v2.0.19 or later
-- Python (used during development)
+- Windows
+- [AutoHotkey v1.1](https://www.autohotkey.com/)
 
-## Technologies Used
-
-- Python
-- ChatGPT
-- AutoHotkey v2.0.19
-
-## Installation
-
-1. Download the latest release.
-2. Ensure that **AutoHotkey v2.0.19** (or a compatible newer version) is installed on your system.
-3. Run the application.
-4. The program will automatically monitor newly created shortcuts and remove the **" - Shortcut"** suffix when detected.
+> This version uses AutoHotkey v1 syntax.
 
 ## Usage
 
-Once launched, Shortcut Suffix Remover operates automatically in the background.
+1. Install AutoHotkey v1.1.
+2. Download or clone this repository.
+3. Run `Shortcut Suffix Remover.ahk`.
+4. Create a shortcut on the Desktop.
+5. If Windows names it with the ` - Shortcut` suffix, the suffix will be removed automatically within about one second.
 
-Whenever Windows creates a new shortcut containing the default **" - Shortcut"** suffix, the application will rename the file and remove the suffix without requiring user interaction.
+While the script is running, the AutoHotkey tray icon remains visible in the Windows notification area.
 
-### Example
+## Run at Windows startup
 
-Before:
+If you want the utility to start automatically when you sign in:
 
+1. Press `Win + R`.
+2. Enter `shell:startup`.
+3. Create a shortcut to `Shortcut Suffix Remover.ahk` inside that folder.
+
+## Configuration
+
+These values are near the top of the script:
+
+```ahk
+ShortcutSuffix := " - Shortcut"
+CheckIntervalMs := 1000
 ```
-My Application - Shortcut.lnk
-```
 
-After:
+`ShortcutSuffix` can be changed if Windows uses a different localized suffix. `CheckIntervalMs` controls how frequently the Desktop is checked.
 
-```
-My Application.lnk
-```
+## Safety behavior
 
-## Purpose
+If a shortcut with the cleaned target name already exists, the script leaves the new shortcut unchanged instead of overwriting the existing file.
 
-Windows automatically appends the text **" - Shortcut"** to shortcut filenames in certain configurations. This utility exists to streamline shortcut naming and improve desktop and folder organization by removing that suffix automatically.
+## Why this project exists
 
-## License
-
-This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
-
-For more information, see the LICENSE file included in this repository.
-
-## Author
-
-**movementoutside**
-
-## Disclaimer
-
-This software is provided "as is", without warranty of any kind. Use it at your own risk. Always test software in your environment before deploying it on production systems.
-
-## Contributions
-
-Contributions, suggestions, bug reports, and improvements are welcome. Feel free to open an issue or submit a pull request.
-
----
-
-© movementoutside
+Windows can append ` - Shortcut` when shortcuts are created. This small automation removes that repetitive cleanup step and keeps Desktop shortcut names concise.
